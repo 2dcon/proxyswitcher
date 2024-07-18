@@ -14,16 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "proxyswitcher.helloWorld",
-        "title": "Hello World"
-      },
-      {
         "command": "proxyswitcher.setProxy",
         "title": "Set Proxy"
-      },
-      {
-          "command": "proxyswitcher.clearProxy",
-          "title": "Clear Proxy"
       }
     ],
     "configuration": {

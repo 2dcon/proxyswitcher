@@ -52,10 +52,14 @@ export function activate(context: vscode.ExtensionContext) {
 	const setProxy = vscode.commands.registerCommand('proxyswitcher.setProxy', () => {
 		const proxies = getProxiesConfig();
 		proxies.push('No proxy');
-		const proxy = vscode.window.showQuickPick(proxies, {placeHolder: 'Select a proxy'});
-
-		proxyConfig.update('http.proxy', proxy, vscode.ConfigurationTarget.Global);
-		vscode.window.showInformationMessage('proxy set to ' + proxy);
+		vscode.window.showQuickPick(proxies, {placeHolder: 'Select a proxy'}).then(selectedProxy => {
+			if (!selectedProxy) {
+				return;
+			}
+			const proxy = selectedProxy === 'No proxy' ? '' : selectedProxy;
+			proxyConfig.update('http.proxy', proxy, vscode.ConfigurationTarget.Global);
+			vscode.window.showInformationMessage('proxy set to ' + proxy);
+		});
 	});
 	
 	const clearProxy = vscode.commands.registerCommand('proxyswitcher.clearProxy', () => {
@@ -63,6 +67,13 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('proxy cleared.');
 	});
 
+	// TODO: Add proxy address validation
+	const validateProxy = vscode.workspace.onDidChangeConfiguration(e => {
+		if (e.affectsConfiguration('proxyswitcher.proxyListString')) {
+			const proxies = getProxiesConfig();
+			proxies.push('No proxy');
+		}
+	});
 
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(setProxy);
